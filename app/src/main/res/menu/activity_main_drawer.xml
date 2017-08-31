@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item android:id="@+id/nav_productos" android:icon="@android:drawable/ic_menu_camera"
+            android:title="Productos" />
+        <item android:id="@+id/nav_carrito" android:icon="@android:drawable/ic_menu_gallery"
+            android:title="Carrito" />
+        <item android:id="@+id/nav_compras" android:icon="@android:drawable/ic_menu_slideshow"
+            android:title="Mis compras" />
+        <item android:id="@+id/nav_estado_cuenta" android:icon="@android:drawable/ic_menu_manage"
+            android:title="Estado de cuenta" />
+    </group>
+
+    <item android:title="Communicate">
+        <menu>
+            <item android:id="@+id/nav_micuenta" android:icon="@android:drawable/ic_menu_share"
+                android:title="Mi cuenta" />
+            <item android:id="@+id/nav_salir" android:icon="@android:drawable/ic_menu_send"
+                android:title="Salir" />
+        </menu>
+    </item>
+
+</menu>
