@@ -1,7 +1,8 @@
-package youtube.demo.youtubedemo;
+package pedido;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.view.View;
@@ -14,14 +15,19 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import youtube.demo.youtubedemo.Fragments.Carrito;
-import youtube.demo.youtubedemo.Fragments.Compras;
-import youtube.demo.youtubedemo.Fragments.Cuentas;
-import youtube.demo.youtubedemo.Fragments.MainFragment;
-import youtube.demo.youtubedemo.Fragments.MiCuenta;
+import pedido.Fragments.*;
+import pedido.Logica.Producto;
+import youtube.demo.youtubedemo.R;
+
+import android.widget.Toast;
+
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    //private Comunicacion_via_Socket comunicacion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +35,9 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -48,6 +57,9 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //comunicacion = new Comunicacion_via_Socket("192.168.0.34",5555);
+        //Conectar_y_monstrar();
+
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
     }
@@ -61,6 +73,18 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
+
+   /* public boolean Conectar_y_monstrar(){
+        //primero conecto y y luego efectuo la operacion
+        if (comunicacion.ConnectTimeout()){
+            List<Producto> lista_productos = comunicacion.Enviar_peticion_Productos();
+            return true;
+        }else{
+            //cartel informativo
+            Toast.makeText(getApplicationContext(), "En este momento no hay conexión de datos disponibles. Intentelo cuando tenga una conexión estable de datos", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

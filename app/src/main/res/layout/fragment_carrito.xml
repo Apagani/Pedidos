@@ -9,4 +9,18 @@
         android:text="Carrito"
         android:id="@+id/textView3"
         android:layout_gravity="center" />
+
+    <ProgressBar
+        android:id="@+id/loading"
+        android:layout_width="78dp"
+        android:layout_height="80dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:layout_gravity="center"/>
+
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Button" />
 </FrameLayout>
