@@ -25,7 +25,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private SQLiteDatabase db;
 
 	private static final int DATABASE_VERSION = 1;
-	private static String DB_PATH = "/data/data/com.example.pedidomobil/databases/";
+	private static String DB_PATH = "/data/data/youtube.demo.youtubedemo/databases/";
 	private static final String DATABASE_NAME = "Basedatos.db";
 	private final Context myContext;
 	/*
@@ -45,9 +45,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		private static final String IVA_cliente = "IVA";
 		private static final String Telefono_cliente = "Telefono";
 		private static final String Saldo_cliente = "Saldo";
+		private static final String User = "user";
+		private static final String Pass = "pass";
 	}
 
-	// Definicion tabla Producto
+	/*// Definicion tabla Producto
 	private static final String Table_Producto = "Producto";
 	public static final class Productos implements BaseColumns {
 		private Productos() {
@@ -58,6 +60,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		private static final String precio_producto = "precio";
 		private static final String stock_producto = "stock";
 	}
+*/
 
 	// Definicion tabla Pedido
 	private static final String Table_Pedido = "Pedido";
@@ -84,6 +87,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		private static final String producto_cp = "producto";
 		private static final String pedido_cp = "pedido";
 		private static final String cantidad_cp = "cantidad";
+		private static final String precio_cp = "precio";
+		private static final String descripcion_producto_cp = "descripcion_producto";
+		private static final String link_cp = "link";
 		private static final String nota_cp = "nota"; // nota para agregar a cada item del pedido
 
 	}
@@ -98,25 +104,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			private static final String puerto = "puerto";
 		}
 
-	// Definici�n tabla zonas
-		private static final String Table_Zonas = "Zona";
-
-		public static final class Zonas implements BaseColumns {
-			private Zonas() {
-			}
-			private static final String nombre_zona = "nombreZona";
-			}
-
-	// Definici�n tabla zonas
-		private static final String Table_Grupos = "Grupo";
-
-		public static final class Grupos implements BaseColumns {
-			private Grupos() {
-			}
-			private static final String nombre_grupo = "nombreGrupo";
-			}
-		
-		
     /*
 	 * ********************************  CREACION DE TABLAS   ***************************************
 	* */
@@ -126,12 +113,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			+ Table_Cliente + " (" + Clientes.id_cliente
 			+ " INTEGER PRIMARY KEY, " + Clientes.Nomyape_cliente
 			+ " TEXT NOT NULL);";
-
+/*
 	private static final String PRODUCTO_TABLE_CREATE = "CREATE TABLE "
 			+ Table_Producto + " (" + Productos.cod_producto
-			+ " INTEGER PRIMARY KEY , " + Productos.denominacion_producto
+			+ " I/*NTEGER PRIMARY KEY , " + Productos.denominacion_producto
 			+ " TEXT NOT NULL UNIQUE, " + Productos.precio_producto
-			+ " DOUBLE, " + Productos.stock_producto + " DOUBLE);";
+			+ " DOUBLE, " + Productos.stock_producto + " DOUBLE);";*/
 
 	private static final String PEDIDO_TABLE_CREATE = "CREATE TABLE "
 			+ Table_Pedido + " (" + Pedidos.id_pedido
@@ -154,15 +141,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			+ Table_Conexion + " (" + Conexiones.dir_ip
 			+ " TEXT PRIMARY KEY, " + Conexiones.puerto
 			+ " TEXT NOT NULL);";
-	
-	private static final String ZONA_TABLE_CREATE = "CREATE TABLE "
-			+ Table_Zonas + " (" + Zonas.nombre_zona
-			+ " TEXT PRIMARY KEY);";
-	
-	private static final String GRUPO_TABLE_CREATE = "CREATE TABLE "
-			+ Table_Grupos + " (" + Grupos.nombre_grupo
-			+ " TEXT PRIMARY KEY);";
-	
+
 	/*
 	 * *********************************  CONSTRUCTOR  ***************************************
 	 * */
@@ -176,7 +155,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	// Creacion de base de datos
 	public void onCreate(SQLiteDatabase db) {
-		//db.execSQL(CLIENTE_TABLE_CREATE);
+		db.execSQL(CLIENTE_TABLE_CREATE);
 		//db.execSQL(PRODUCTO_TABLE_CREATE);
 		//db.execSQL(PEDIDO_TABLE_CREATE);
 		//db.execSQL(CANTIDAD_PEDIDA_TABLE_CREATE);
@@ -214,10 +193,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 	/*
 	 * ********************************* Borrado de datos de tablas   ***************************************
-	 * */	
-	public void deleteAllDataProduct() {
-		db.delete(Table_Producto, null, null);
-	}
+	 * */
 	
 	public void deleteAllDateCliente(){
 		db.delete(Table_Cliente, null, null);
@@ -234,13 +210,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void deleteAllDataConexion() {
 		db.delete(Table_Conexion, null, null);
 	}
-	
-	public void deleteAllDataZona() {
-		db.delete(Table_Zonas, null, null);
-	}
-	public void deleteAllDataGrupo() {
-		db.delete(Table_Grupos, null, null);
-	}
+
 
 	/*
 	 * ********************************* Abrir y cerrar base de datos ***************************************
@@ -347,19 +317,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * ********************************* Alta de registros en tablas ***************************************
 	 * */
 
-	public void Add_pedido(Pedido p) {
+	public void Add_pedido(int cliente, String fecha, Item item) {
 		Abrir();
 			//cada pedido se agrega con el id autoincremental, por lo que no hay problema de repetidos
 			ContentValues values = new ContentValues();
-			values.put(Pedidos.comentarios_pedido, p.getComentario());
-			values.put(Pedidos.cliente_pedido, p.getCliente().getCod());
-			values.put(Pedidos.estado_pedido, p.getEstado());
-			values.put(Pedidos.fecha_pedido, p.getFecha());
-			db.insert(Table_Pedido, null, values);	
-			
-			//Agrego los items de este pedido
-			Add_items_pedido(p);
-		
+			values.put(Pedidos.comentarios_pedido, "");
+			values.put(Pedidos.cliente_pedido, cliente);
+			values.put(Pedidos.estado_pedido, "Carrito");
+			values.put(Pedidos.fecha_pedido, fecha);
+			db.insert(Table_Pedido, null, values);
+
+		    item.setIdPedido(existePedido_en_carrito());
+
+	        Add_Item(item);
 		Cerrar();
 	}
 	
@@ -391,48 +361,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cerrar();
 	}
 
-	public boolean Add_producto(Producto p) {
-		Abrir();
 
-		if (getProducto(p.getCod()) == null) { //no existe el producto en la base de datos
-			ContentValues values = new ContentValues();
-			values.put(Productos.cod_producto, p.getCod());
-			values.put(Productos.precio_producto, p.getPrecio());
-			values.put(Productos.denominacion_producto, p.getDenominacion());
-			values.put(Productos.stock_producto, p.getStock());
-			db.insert(Table_Producto, null, values);
-			Cerrar();
-			return true;
-		}else{
-			Update_Producto(p);  //en caso que el producto exista se modifica para tener los datos sincronizados de manera correcta.
-			Cerrar();
-			return false;
-		}
-	}
-
-	public boolean Add_cliente(Cliente c){
+	public void Add_cliente(Cliente c){
 		Abrir();
-		
-		if (getCliente(c.getCod())== null){ //si el cliente no existe 
-			ContentValues values = new ContentValues();
-			values.put(Clientes.id_cliente, c.getCod());
-			values.put(Clientes.Nomyape_cliente, c.getNombre());
-			values.put(Clientes.Saldo_cliente, c.getSaldo());
-			values.put(Clientes.Domicilio_cliente, c.getDomicilio());
-			values.put(Clientes.Localidad_cliente, c.getLocalidad());
-			values.put(Clientes.CUIT_cliente, c.getCUIT());
-			values.put(Clientes.IVA_cliente, c.getIVA());
-			values.put(Clientes.Telefono_cliente, c.getTelefono());
+		ContentValues values = new ContentValues();
+		values.put(Clientes.id_cliente, c.getCod());
+		values.put(Clientes.Nomyape_cliente, c.getNombre());
+		values.put(Clientes.Saldo_cliente, c.getSaldo());
+		values.put(Clientes.Domicilio_cliente, c.getDomicilio());
+		values.put(Clientes.Localidad_cliente, c.getLocalidad());
+		values.put(Clientes.CUIT_cliente, c.getCUIT());
+		values.put(Clientes.IVA_cliente, c.getIVA());
+		values.put(Clientes.Telefono_cliente, c.getTelefono());
+		values.put(Clientes.User, c.getUser());
+		values.put(Clientes.Pass, c.getPass());
 			
 			db.insert(Table_Cliente, null, values);
-			Cerrar();
-			return true;   
-		}else{
-			Update_cliente(c);  //en caso que exista el cliente se modifica por si algun dato cambio, esto sirve para sincronizar todos los 
-			//clientes.
-			Cerrar();
-			return true;  //el cliente ya existe
-		}
+		Cerrar();
+
 	}
 
 	public void Add_Item(Item cp) {
@@ -443,6 +389,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			values.put(Cantidades_pedidas.pedido_cp, cp.getIdPedido());
 			values.put(Cantidades_pedidas.cantidad_cp, cp.getCantidad());
 			values.put(Cantidades_pedidas.nota_cp , cp.getNota());
+		    values.put(Cantidades_pedidas.descripcion_producto_cp, cp.getProducto().getDescripcion());
+		    values.put(Cantidades_pedidas.precio_cp , cp.getProducto().getPrecio());
+		    values.put(Cantidades_pedidas.link_cp , cp.getProducto().getLink());
 			db.insert(Table_cantidad_pedida, null, values);
 			Cerrar();
 		
@@ -469,24 +418,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		Cerrar();
 	}
 
-	public void Add_Zona(String zona) {
-		Abrir();
-
-		ContentValues values = new ContentValues();
-		values.put(Zonas.nombre_zona, zona);
-		db.insert(Table_Zonas, null, values);
-
-		Cerrar();
-	}
-	public void Add_Grupo(String grupo) {
-		Abrir();
-
-		ContentValues values = new ContentValues();
-		values.put(Grupos.nombre_grupo, grupo);
-		db.insert(Table_Grupos, null, values);
-
-		Cerrar();
-	}
 		
 	//*********************************************** UPDATE  *********************************************************
 	
@@ -508,22 +439,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		
 		Cerrar();
 	}
-	
-	public void Update_Producto(Producto p){
-		//Actualiza el saldo del cliente con el codigo pasado por parametro
-		Abrir();
 
-		//Establecemos los campos-valores a actualizar
-		ContentValues valores = new ContentValues();
-		valores.put(Productos.denominacion_producto,p.getDenominacion());
-		valores.put(Productos.precio_producto,p.getPrecio());
-		valores.put(Productos.stock_producto, p.getStock());
-		 
-		//Actualizamos el registro en la base de datos
-		db.update(Table_Producto, valores, Productos.cod_producto + "=" + p.getCod(), null);
-		
-		Cerrar();
-	}
 	
 	public void Update_saldo_cliente(int codCliente, Double saldo){
 		//Actualiza el saldo del cliente con el codigo pasado por parametro
@@ -585,6 +501,28 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	/*
 	 * ***************************************** GET **********************************************************
 	 * */
+	public boolean existeUser(Cliente lu){
+		Cursor c = db.rawQuery("SELECT Cod, user, pass FROM " + Table_Cliente, null);
+		if (c.moveToFirst()) {
+			lu.setCod(c.getInt(0));
+			lu.setUser(c.getString(1));
+			lu.setPass(c.getString(2));
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public int getIdUser(){
+		Cursor c = db.rawQuery("SELECT Cod, user, pass FROM " + Table_Cliente, null);
+		if (c.moveToFirst()) {
+			return c.getInt(0);
+		}else{
+			return 0;
+		}
+	}
+
+
 	// Getting single Producto y cliente
 	public Cliente getCliente(int id) {
 
@@ -629,31 +567,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	}
 	
-	public int getNroNuevoCliente(){
-		Cursor c = db.rawQuery("SELECT MAX("+ Clientes.id_cliente +") FROM " + Table_Cliente, null);
+	public int getNroNuevoCliente() {
+		Cursor c = db.rawQuery("SELECT MAX(" + Clientes.id_cliente + ") FROM " + Table_Cliente, null);
 		c.moveToFirst();
 		int id = c.getInt(0) + 1;
 		return id;
-
-	}
-
-	public Producto getProducto(int id) {
-
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(Table_Producto, new String[] {
-				Productos.denominacion_producto,Productos.precio_producto, Productos.stock_producto},
-				Productos.cod_producto + "=?",
-				new String[] { String.valueOf(id) }, null, null, null, null);
-
-		if (cursor.moveToFirst()){
-			boolean venderxBulto = cursor.getInt(3)>0;
-			boolean stockPorKilo = cursor.getInt(5)>0;
-			boolean facturarporkilo = cursor.getInt(7)>0;
-    		Producto p = new Producto(id,cursor.getString(0), Double.parseDouble(cursor.getString(1)),cursor.getDouble(2));
-    		return p;
-		}else{
-			return null;  //no encontro el producto buscado.
-		}
 	}
 	
 	public int getNroPedidoActual(){
@@ -663,21 +581,19 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return id;
 	}
 
-	public String getNombreProducto(int id) {
+    public int existePedido_en_carrito(){
+        String selectQuery = "SELECT  id FROM " + Table_Pedido + " where estado = 'Carrito'";
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(selectQuery, null);
+        if (cursor.moveToFirst()) {
+            return cursor.getInt(0);
+        }else{
+            return 0;
+        }
+    }
 
-		SQLiteDatabase db = this.getReadableDatabase();
-    	Cursor cursor = db.query(Table_Producto, new String[] {
-		                 Productos.cod_producto, Productos.stock_producto,Productos.precio_producto, Productos.denominacion_producto },
-				         Productos.cod_producto + "=?",new String[] { String.valueOf(id) }, null, null, null, null);
 
-		if (cursor.moveToFirst()){
-			return cursor.getString(3);
-		}else{
-			return null;
-		}
-	}
-
-	public String Productos_Pedidos(int pedido){
+    public String Productos_Pedidos(int pedido){
 		String cp = "";
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(Table_cantidad_pedida, new String[] { Cantidades_pedidas.producto_cp,Cantidades_pedidas.cantidad_cp, 
@@ -687,7 +603,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
        // looping through all rows and adding to list
     	if (cursor.moveToFirst()) {
 			do {
-				cp += "Producto: " + getNombreProducto(cursor.getInt(0))  + "\r\n";
+				//cp += "Producto: " + getNombreProducto(cursor.getInt(0))  + "\r\n";
 				cp += "Cantidad: " + cursor.getString(1) + "\r\n";
 				//si tiene nota la agrego		
 				if (cursor.getString(2) != "")
@@ -740,11 +656,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return ListaProductos;
 	}
 	
-	/*public List<Item> getAllItemsPedido(int idPedido) {
+	public List<Item> getAllItemsPedido(int idPedido) {
 
 		List<Item> ListaProductos = new ArrayList<Item>();
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(Table_cantidad_pedida, new String[] { Cantidades_pedidas.producto_cp,Cantidades_pedidas.cantidad_cp,Cantidades_pedidas.nota_cp}, Cantidades_pedidas.pedido_cp + "=?",
+		Cursor cursor = db.query(Table_cantidad_pedida, new String[] { Cantidades_pedidas.producto_cp,Cantidades_pedidas.cantidad_cp, Cantidades_pedidas.precio_cp,Cantidades_pedidas.descripcion_producto_cp,Cantidades_pedidas.nota_cp}, Cantidades_pedidas.pedido_cp + "=?",
 				new String[] {String.valueOf(idPedido)  }, null, null, null, null);
 
 		// looping through all rows and adding to list
@@ -752,12 +668,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			do {
 				//Producto producto, int pedido, double cantidad, boolean unitBulto, String nota, double descuento
 				boolean valueUnit = cursor.getInt(2)>0;
-				Item item = new Item(this.getProducto(cursor.getInt(0)),idPedido,cursor.getDouble(1),valueUnit,cursor.getString(3),cursor.getDouble(4));
+				//int cod, String denominacion, double precio, double stock, String link, String descripcion){
+				Producto p = new Producto(cursor.getInt(0),cursor.getString(3),cursor.getDouble(2),0,"",cursor.getString(3));
+				//Producto producto, int pedido, double cantidad, String nota
+				Item item = new Item(p,idPedido,cursor.getDouble(1),cursor.getString(4));
 				ListaProductos.add(item);
 			} while (cursor.moveToNext());
 		}
 		return ListaProductos;
-	}*/
+	}
 	
 	/**
 	 * Dado un Cursor con los registros de la base de datos, da formato y
@@ -765,6 +684,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	 * 
 	 * @return ArrayList<String>
 	 * */
+
 	public ArrayList<Pedido> getLista_pedidos_no_enviados(){
 		String selectQuery = "SELECT  * FROM " + Table_Pedido + " where estado = 'Creado y no enviado'";
 		SQLiteDatabase db = this.getWritableDatabase();
@@ -783,7 +703,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		return listData;
 	}
 	
-	public ArrayList<Producto> getLista_productos_lista_precio(String text){
+	/*public ArrayList<Producto> getLista_productos_lista_precio(String text){
 		String selectQuery;
 		
 		//if (text.length() != 0){
@@ -815,7 +735,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			} while (cursor.moveToNext());
 		}
 		return listData;
-	}
+	}*/
 	
 	public ArrayList<Pedido> getLista_pedidos_estado_Armando(){
 		String selectQuery = "SELECT  * FROM " + Table_Pedido + " where estado = 'Armando'";
@@ -935,31 +855,13 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	return datos;
 	}
 	
-	public String[] getProdcutos_para_control_autocomplete(){
-		SQLiteDatabase db = this.getWritableDatabase();
-		
-		String selectQuery = "SELECT " +  Productos.denominacion_producto  + " FROM " + Table_Producto;
-		Cursor c = db.rawQuery(selectQuery, null);
-		        
-	    String contenido = new String();
-    	if (c.moveToFirst()){
-	    	do{
-	    		contenido += c.getString(0)+",";
-	    	}while (c.moveToNext());
-    	}
-    	//se divide el string asi lo puede entender el autocomplete
-    	final String[] datos = contenido.split(",");
-    	
-    	return datos;
-	}
-	
-	public String getPuerto(){
+	public Integer getPuerto(){
 		SQLiteDatabase db = this.getReadableDatabase();
 		Cursor cursor = db.query(Table_Conexion, new String[] {Conexiones.puerto},null, null, null, null, null, null);
 
        // looping through all rows and adding to list
     	if (cursor.moveToFirst()) {
-			return cursor.getString(0);
+			return cursor.getInt(0);
 		}else{
 			return null;     
 		}

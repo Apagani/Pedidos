@@ -201,30 +201,37 @@ public class Comunicacion_via_Socket{
 		    return null;
 	   }	
 	}
-	
-/*	public ArrayList<Evento> Enviar_peticion_Eventos(){
-		Enviar_peticion_de_datos_al_servidor(Accion.Eventos);
-		
+
+	public Boolean Enviar_peticion_Login(Cliente cliente, Accion a){
+		Enviar_peticion_de_login_servidor(a, cliente);
+
 		//Ahora me quedo esperando al servidor que me envie los datos
 		try {
 			// Manejamos flujo de Entrada
 			ObjectInputStream ois = new ObjectInputStream(miCliente.getInputStream());
 			Object aux = ois.readObject();// leemos objeto
-			
-			// si el objeto es una instancia de Pedido, Cliente, Producto
-			if (aux instanceof Paquete_de_datos) {
-					Paquete_de_datos p = (Paquete_de_datos)aux;
-					return p.getEventos();
-		     }else{
-		    	 return null;
-		     }
-			
-	   } catch (Exception e) {
-		    e.printStackTrace();
-		    return null;
-	   }	
-	}*/
 
+			if (aux instanceof Paquete_de_datos) {
+				Paquete_de_datos p = (Paquete_de_datos)aux;
+				if (p.getOperacion().equals(Accion.ErrorLogin)) {
+					return false;
+				}else {
+					 if (p.getOperacion().equals(Accion.NuevoUsuario)){
+						 sqlite.Add_cliente(p.getCliente());
+						 return true;
+					 }else{
+						 return true;
+					 }
+				}
+			}else{
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 	
 	public void Enviar_peticion_de_datos_al_servidor(Accion accion, int cliente){
 		 //envio un paquete de datos al servidor indicandole que me envie datos actualizados
@@ -233,6 +240,13 @@ public class Comunicacion_via_Socket{
 		 m.Operacion = accion;
          m.setCliente(new Cliente(cliente));
 		 Snd_Msg(m);
+	}
+
+	public void Enviar_peticion_de_login_servidor(Accion accion, Cliente cliente){
+		Paquete_de_datos m = new Paquete_de_datos();
+		m.Operacion = accion;
+		m.setCliente(cliente);
+		Snd_Msg(m);
 	}
 	
 	public void Almacenar_datos_recibidos_en_base_local(Paquete_de_datos p ){

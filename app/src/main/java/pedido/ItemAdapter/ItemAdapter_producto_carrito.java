@@ -1,10 +1,5 @@
 package pedido.ItemAdapter;
 
-import java.io.InputStream;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-import pedido.Logica.Producto;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -17,18 +12,22 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import pedido.Fragments.MainFragment;
+import java.io.InputStream;
+import java.util.List;
+
+import pedido.Logica.Item;
+import pedido.Logica.Producto;
 import youtube.demo.youtubedemo.R;
 
-public class ItemAdapter_producto extends BaseAdapter {
+public class ItemAdapter_producto_carrito extends BaseAdapter {
 
     // Declare Variables
     Context context;
-    private List<Producto> productos;
+    private List<Item> productos;
 
     LayoutInflater inflater;
 
-    public ItemAdapter_producto(Context context, List<Producto> items ) {
+    public ItemAdapter_producto_carrito(Context context, List<Item> items ) {
         this.context = context;
         productos = items;
     }
@@ -53,25 +52,30 @@ public class ItemAdapter_producto extends BaseAdapter {
         // Declare Variables
         ImageView imgImg;
         TextView txtTitle;
-        TextView txtContenido;
+        TextView txtPrecio;
+        TextView txtCantidad;
+        TextView txtPrecioTotal;
 
         //http://developer.android.com/intl/es/reference/android/view/LayoutInflater.html
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        View itemView = inflater.inflate(R.layout.list_row, parent, false);
+        View itemView = inflater.inflate(R.layout.list_row_carrito, parent, false);
 
         // Locate the TextViews in listview_item.xml
         imgImg = (ImageView) itemView.findViewById(R.id.imagen_producto_list);
-        txtTitle = (TextView) itemView.findViewById(R.id.tv_titulo_single_post_circuito);
-        txtContenido = (TextView) itemView.findViewById(R.id.tv_contenido_single_post_circuito);
+        txtTitle = (TextView) itemView.findViewById(R.id.textDescripcionProductoCarrito);
+        txtPrecio = (TextView) itemView.findViewById(R.id.text_precio_producto);
+        txtCantidad = (TextView) itemView.findViewById(R.id.text_cantidad_producto);
+        txtPrecioTotal = (TextView) itemView.findViewById(R.id.text_total_producto);
 
         // Capture position and set to the TextViews
-        Producto item = this.productos.get(position);
-        //imgImg.setImageResource(R.drawable.cel1);
-        txtTitle.setText(item.getDenominacion());
-        txtContenido.setText(Double.toString(item.getPrecio()));
+        Item item = this.productos.get(position);
+        txtTitle.setText(item.getProducto().getDescripcion());
+        txtPrecio.setText(Double.toString(item.getProducto().getPrecio()));
+        txtCantidad.setText(Double.toString(item.getCantidad()));
+        txtPrecioTotal.setText(Double.toString(item.getProducto().getPrecio()*item.getCantidad()));
 
-        String u = new String(item.getLink());
+        String u = new String(item.getProducto().getLink());
         new DownloadImageTask((ImageView) itemView.findViewById(R.id.imagen_producto_list)).execute(u);
 
         return itemView;

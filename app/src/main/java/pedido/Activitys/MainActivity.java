@@ -1,4 +1,4 @@
-package pedido;
+package pedido.Activitys;
 
 import android.app.FragmentManager;
 import android.os.Bundle;
@@ -17,6 +17,7 @@ import android.view.MenuItem;
 
 import pedido.Fragments.*;
 import pedido.Logica.Producto;
+import pedido.SQlite.DatabaseHandler;
 import youtube.demo.youtubedemo.R;
 
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     //private Comunicacion_via_Socket comunicacion;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,9 +59,6 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //comunicacion = new Comunicacion_via_Socket("192.168.0.34",5555);
-        //Conectar_y_monstrar();
-
         FragmentManager fm = getFragmentManager();
         fm.beginTransaction().replace(R.id.content_frame, new MainFragment()).commit();
     }
@@ -74,17 +73,6 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-   /* public boolean Conectar_y_monstrar(){
-        //primero conecto y y luego efectuo la operacion
-        if (comunicacion.ConnectTimeout()){
-            List<Producto> lista_productos = comunicacion.Enviar_peticion_Productos();
-            return true;
-        }else{
-            //cartel informativo
-            Toast.makeText(getApplicationContext(), "En este momento no hay conexión de datos disponibles. Intentelo cuando tenga una conexión estable de datos", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

@@ -1,7 +1,9 @@
 package pedido.Fragments;
 
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +17,8 @@ import java.util.List;
 import pedido.Comunicacion.Comunicacion_via_Socket;
 import pedido.ItemAdapter.ItemAdapter_producto;
 import pedido.Logica.Producto;
-import pedido.detalle_productoActivity;
+import pedido.SQlite.DatabaseHandler;
+import pedido.Activitys.detalle_productoActivity;
 import youtube.demo.youtubedemo.R;
 
 
@@ -24,6 +27,8 @@ public class MainFragment extends Fragment {
     private ListView listview_productos;
     private Comunicacion_via_Socket comunicacion;
     ProgressBar mLoading;
+    private DatabaseHandler sqlite;
+    private ProgressDialog dialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -34,22 +39,20 @@ public class MainFragment extends Fragment {
         mLoading = (ProgressBar) v.findViewById(R.id.loading_productos);
         mLoading.setVisibility(View.VISIBLE);
 
-        comunicacion = new Comunicacion_via_Socket("192.168.0.34",5555);
+        //abro la base de datos
+        sqlite = new DatabaseHandler(getActivity());
+        sqlite.Abrir();
 
-        if (Conectar_y_monstrar()) {
-            if (lista_productos != null) {
-                Cargar_detalle_en_vista();
-            } else {
-                mLoading.setVisibility(View.GONE);
-                Toast.makeText(getActivity().getApplicationContext(), "No existen Productos aun.", Toast.LENGTH_LONG).show();
-            }
-        }
+        //obtengo los datos de conexion
+        comunicacion = new Comunicacion_via_Socket(sqlite.getIp(),sqlite.getPuerto());
+
+        new MiTarea().execute("");
 
         return v;
     }
 
     public void Cargar_detalle_en_vista(){
-        mLoading.setVisibility(View.GONE);
+
 
          //seteo el adaptador a la lista con una lista de productos
         listview_productos.setAdapter(new ItemAdapter_producto(getActivity(), lista_productos));
@@ -63,6 +66,7 @@ public class MainFragment extends Fragment {
             }
         });
 
+
     }
 
     public boolean Conectar_y_monstrar(){
@@ -75,6 +79,32 @@ public class MainFragment extends Fragment {
             Toast.makeText(getActivity().getApplicationContext(), "En este momento no hay conexión de datos disponibles. Intentelo cuando tenga una conexión estable de datos", Toast.LENGTH_SHORT).show();
             mLoading.setVisibility(View.GONE);
             return false;
+        }
+    }
+
+
+    private class MiTarea extends AsyncTask<String, Float, Integer> {
+
+        protected void onPreExecute() {
+            mLoading.setVisibility(View.VISIBLE);
+        }
+
+        protected Integer doInBackground(String... urls) {
+            if (comunicacion.ConnectTimeout()){
+                lista_productos = comunicacion.Enviar_peticion_Productos(1);
+            }else{
+                Toast.makeText(getActivity().getApplicationContext(), "En este momento no hay conexión de datos disponibles. Intentelo cuando tenga una conexión estable de datos", Toast.LENGTH_SHORT).show();
+            }
+            return 250;
+        }
+
+        protected void onProgressUpdate (Float... valores) {
+
+        }
+
+        protected void onPostExecute(Integer bytes) {
+            Cargar_detalle_en_vista();
+            mLoading.setVisibility(View.GONE);
         }
     }
 

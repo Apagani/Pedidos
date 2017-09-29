@@ -18,7 +18,7 @@ public class Paquete_de_datos implements Serializable {
 	private Pedido pedido;
 	
 	//Enumerador que determina que tipo de data va a enviar o recibir
-	public enum Accion {ListaProductos, Pedido, PedidoOk, Detalle_CtaCte_Cliente, Fin};
+	public enum Accion {Login, NuevoUsuario,ErrorLogin,ListaProductos, Pedido, PedidoOk, Detalle_CtaCte_Cliente, Fin};
 	public Accion Operacion;
 	
 	

@@ -15,6 +15,8 @@ public class Cliente implements Serializable{
     private String Localidad;
     private String Telefono;
     private Double Saldo;
+	private String user;
+	private String pass;
 
 
     //Enumerador que determina que accion se debe hacer cuando se sincriniza el cliente en el movil
@@ -25,6 +27,10 @@ public class Cliente implements Serializable{
   		//este constructor es utilizado unicamente para transitir al smartphone los clientes eliminados
   		this.Cod = codi;
   	}
+
+	public Cliente(){
+		//constructor para el login
+	}
 
     public Cliente(int Cod, String Nombre, double Saldo){
 		this.Cod = Cod;
@@ -105,6 +111,22 @@ public class Cliente implements Serializable{
 
 	public void setSaldo(Double saldo) {
 		Saldo = saldo;
+	}
+
+	public void setUser(String u){
+		this.user = u;
+	}
+
+	public void setPass(String p){
+		this.pass = p;
+	}
+
+	public String getUser(){
+		return user;
+	}
+
+	public String getPass(){
+		return pass;
 	}
 
 
