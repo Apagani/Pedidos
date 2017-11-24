@@ -4,6 +4,7 @@ import java.util.List;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,10 @@ public class ItemAdapter_ctacte extends BaseAdapter {
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	 
 	        View rowView = convertView;
+
+			Typeface face_regular=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Regular.ttf");
+			Typeface face_medium=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Medium.ttf");
+			Typeface face_semibold=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-SemiBold.ttf");
 	 
 	        if (convertView == null) {
 	            // Create a new view into the list.
@@ -58,14 +63,19 @@ public class ItemAdapter_ctacte extends BaseAdapter {
 	 
 	        ItemCtaCte item = this.items.get(position);
 	        fecha.setText(item.getFecha());
-	        montoFact.setText(item.getMontoFact().toString());
-	        montoHaber.setText(item.getMontoHaber().toString());
-	        montoSaldo.setText(item.getMontoSaldo().toString());
+	        montoFact.setText("$"+item.getMontoFact().toString());
+	        montoHaber.setText("$"+item.getMontoHaber().toString());
+	        montoSaldo.setText("$"+item.getMontoSaldo().toString());
 
-			if (position == (items.size()-1)){
+			fecha.setTypeface(face_regular);
+			montoFact.setTypeface(face_medium);
+			montoHaber.setTypeface(face_regular);
+			montoSaldo.setTypeface(face_medium);
+
+			/*if (position == (items.size()-1)){
 				//pinto el saldo de rojo
 				montoSaldo.setTextColor(Color.RED);
-			}
+			}*/
 	 
 	        return rowView;
 	    }

@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Cuenta_corriente extends Fragment {
     private ArrayList<ItemCtaCte> Detalle_cliente;
     ProgressBar mLoading;
     private int cliente;
+    private TextView TextSaldo;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class Cuenta_corriente extends Fragment {
         //lista que contendra los pedidos
         listDetalleCtaCte = (ListView) v.findViewById( R.id.list_cta_cte);
         mLoading = (ProgressBar)v.findViewById(R.id.loading_cta_cte);
+        TextSaldo = (TextView) v.findViewById(R.id.textSALDO);
+
 
         //abro la base de datos
         sqlite = new DatabaseHandler(getActivity());
@@ -88,6 +92,8 @@ public class Cuenta_corriente extends Fragment {
         protected void onPostExecute(Integer bytes) {
             Cargar_detalle_en_vista();
             mLoading.setVisibility(View.GONE);
+            detalleItem = Detalle_cliente.get(0);
+            TextSaldo.setText("SALDO $" + detalleItem.getMontoSaldo().toString());
         }
     }
 }

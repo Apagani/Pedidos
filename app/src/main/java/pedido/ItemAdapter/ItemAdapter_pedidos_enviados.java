@@ -3,6 +3,7 @@ package pedido.ItemAdapter;
 import java.util.List;
 
 import android.content.Context;
+import android.graphics.Typeface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,6 +43,11 @@ public class ItemAdapter_pedidos_enviados extends BaseAdapter {
 	    public View getView(int position, View convertView, ViewGroup parent) {
 	 
 	        View rowView = convertView;
+
+
+			Typeface face_regular=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Regular.ttf");
+			Typeface face_medium=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Medium.ttf");
+			Typeface face_semibold=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-SemiBold.ttf");
 	 
 	        if (convertView == null) {
 	            // Create a new view into the list.
@@ -58,7 +64,10 @@ public class ItemAdapter_pedidos_enviados extends BaseAdapter {
 	        Pedido item = this.items.get(position);
 	        cliente.setText("Pedido Nro: "+Integer.toString(item.getId()));
 	        fecha.setText("Fecha enviado: "+item.getFecha());
-	        imagePedido.setImageResource(R.drawable.car);
+	        imagePedido.setImageResource(R.drawable.carrito_pedido);
+
+			cliente.setTypeface(face_semibold);
+			fecha.setTypeface(face_regular);
 	 
 	        return rowView;
 	    }
