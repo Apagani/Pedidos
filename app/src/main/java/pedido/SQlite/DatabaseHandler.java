@@ -389,7 +389,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 			values.put(Cantidades_pedidas.pedido_cp, cp.getIdPedido());
 			values.put(Cantidades_pedidas.cantidad_cp, cp.getCantidad());
 			values.put(Cantidades_pedidas.nota_cp , cp.getNota());
-		    values.put(Cantidades_pedidas.descripcion_producto_cp, cp.getProducto().getDescripcion());
+		    values.put(Cantidades_pedidas.descripcion_producto_cp, cp.getProducto().getDenominacion());
 		    values.put(Cantidades_pedidas.precio_cp , cp.getProducto().getPrecio());
 		    values.put(Cantidades_pedidas.link_cp , cp.getProducto().getLink());
 			db.insert(Table_cantidad_pedida, null, values);
@@ -553,10 +553,12 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
 	}
 	
-	public Cliente getClienteCompleto(String nombre) {
+	public Cliente getClienteCompleto() {
+
+		String id = Integer.toString(getIdUser());
 
 		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(Table_Cliente, new String[] {Clientes.id_cliente,Clientes.Nomyape_cliente,Clientes.Domicilio_cliente, Clientes.Localidad_cliente,Clientes.Telefono_cliente, Clientes.CUIT_cliente, Clientes.IVA_cliente, Clientes.Saldo_cliente }, Clientes.Nomyape_cliente + "=?",new String[] { nombre }, null, null, null, null);
+		Cursor cursor = db.query(Table_Cliente, new String[] {Clientes.id_cliente,Clientes.Nomyape_cliente,Clientes.Domicilio_cliente, Clientes.Localidad_cliente,Clientes.Telefono_cliente, Clientes.CUIT_cliente, Clientes.IVA_cliente, Clientes.Saldo_cliente }, Clientes.id_cliente + "=?",new String[] {id }, null, null, null, null);
 
 		if (cursor.moveToFirst()){
     		Cliente c = new Cliente(Integer.parseInt(cursor.getString(0)),cursor.getString(1), cursor.getString(2),cursor.getString(3),cursor.getString(4), cursor.getString(5),cursor.getString(6),cursor.getDouble(7));
@@ -591,6 +593,17 @@ public class DatabaseHandler extends SQLiteOpenHelper {
             return 0;
         }
     }
+
+	public boolean producto_no_esta_en_carrito(int pedido, int producto){
+		String selectQuery = "SELECT cantidad FROM Cantidad_pedida where pedido =" + pedido + " and producto = "+ producto;
+		SQLiteDatabase db = this.getWritableDatabase();
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		if (cursor.moveToFirst()) {
+			return false;
+		}else{
+			return true;
+		}
+	}
 
 
     public String Productos_Pedidos(int pedido){
@@ -659,19 +672,26 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public List<Item> getAllItemsPedido(int idPedido) {
 
 		List<Item> ListaProductos = new ArrayList<Item>();
-		SQLiteDatabase db = this.getReadableDatabase();
-		Cursor cursor = db.query(Table_cantidad_pedida, new String[] { Cantidades_pedidas.producto_cp,Cantidades_pedidas.cantidad_cp, Cantidades_pedidas.precio_cp,Cantidades_pedidas.descripcion_producto_cp,Cantidades_pedidas.nota_cp}, Cantidades_pedidas.pedido_cp + "=?",
-				new String[] {String.valueOf(idPedido)  }, null, null, null, null);
+
+		//Cursor cursor = db.query(Table_cantidad_pedida, new String[] { Cantidades_pedidas.producto_cp,Cantidades_pedidas.cantidad_cp, Cantidades_pedidas.precio_cp,Cantidades_pedidas.descripcion_producto_cp,Cantidades_pedidas.nota_cp}, Cantidades_pedidas.pedido_cp + "=?",
+				//new String[] {String.valueOf(idPedido)  }, null, null, null, null);
+
+        String selectQuery = "SELECT producto, cantidad, nota, precio, descripcion_producto, link, pedido  FROM Cantidad_pedida WHERE pedido = " + idPedido;
+		//producto, cantidad, nota, precio, descripcion_producto, link
+        SQLiteDatabase db = this.getReadableDatabase();;
+        Cursor cursor = db.rawQuery(selectQuery, null);
 
 		// looping through all rows and adding to list
 		if (cursor.moveToFirst()) {
 			do {
 				//Producto producto, int pedido, double cantidad, boolean unitBulto, String nota, double descuento
-				boolean valueUnit = cursor.getInt(2)>0;
+				//boolean valueUnit = cursor.getInt(2)>0;
+
 				//int cod, String denominacion, double precio, double stock, String link, String descripcion){
-				Producto p = new Producto(cursor.getInt(0),cursor.getString(3),cursor.getDouble(2),0,"",cursor.getString(3));
+				Producto p = new Producto(cursor.getInt(0),cursor.getString(4),cursor.getDouble(3),0,cursor.getString(5),cursor.getString(4));
+
 				//Producto producto, int pedido, double cantidad, String nota
-				Item item = new Item(p,idPedido,cursor.getDouble(1),cursor.getString(4));
+				Item item = new Item(p,idPedido,cursor.getDouble(1),cursor.getString(6));
 				ListaProductos.add(item);
 			} while (cursor.moveToNext());
 		}
@@ -757,7 +777,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	
 
 	public ArrayList<Pedido> getLista_pedidos_enviados(){
-		String selectQuery = "SELECT  * FROM " + Table_Pedido + " where estado = 'Creado y enviado' order by id DESC";
+		String selectQuery = "SELECT  * FROM " + Table_Pedido + " where estado = 'Enviado' order by id DESC";
 		SQLiteDatabase db = this.getWritableDatabase();
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		

@@ -3,7 +3,10 @@ package pedido.Comunicacion;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import pedido.Logica.*;
+import pedido.Logica.Cliente;
+import pedido.Logica.ItemCtaCte;
+import pedido.Logica.Pedido;
+import pedido.Logica.Producto;
 
 public class Paquete_de_datos implements Serializable {
 
@@ -16,6 +19,7 @@ public class Paquete_de_datos implements Serializable {
 	private ArrayList<Producto> Lista_productos;
 	private ArrayList<ItemCtaCte> Lista_CtaCte;
 	private Pedido pedido;
+	private String dolar;
 	
 	//Enumerador que determina que tipo de data va a enviar o recibir
 	public enum Accion {Login, NuevoUsuario,ErrorLogin,ListaProductos, Pedido, PedidoOk, Detalle_CtaCte_Cliente, Fin};
@@ -67,5 +71,12 @@ public class Paquete_de_datos implements Serializable {
 		Operacion = operacion;
 	}
 
+	public void setDolar(String d){
+		this.dolar = d;
+	}
+
+	public String getDolar(){
+		return this.dolar;
+	}
 	
 }

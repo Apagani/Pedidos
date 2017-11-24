@@ -3,6 +3,7 @@ package pedido.Activitys;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -33,7 +34,7 @@ import android.widget.Toast;
 
 public class detalle_productoActivity extends Activity implements OnClickListener {
     Button menos, mas, addCarrito;
-    TextView  nombreProducto, precioProducto, descripcionProducto, cantidadPedida;
+    TextView  nombreProducto, precioProducto,precioProductodolar, descripcionProducto, cantidadPedida;
     Producto p;
     private DatabaseHandler sqlite;
 
@@ -43,15 +44,26 @@ public class detalle_productoActivity extends Activity implements OnClickListene
 
         p = ((Producto)getIntent().getExtras().getSerializable("producto"));
 
+        Typeface face_regular=Typeface.createFromAsset(getAssets(),"fonts/Barlow-Regular.ttf");
+        Typeface face_medium=Typeface.createFromAsset(getAssets(),"fonts/Barlow-Medium.ttf");
+        Typeface face_semibold=Typeface.createFromAsset(getAssets(),"fonts/Barlow-SemiBold.ttf");
+
+
         //lleno la vista
         nombreProducto = (TextView)findViewById(R.id.TxtNombreProducto);
         nombreProducto.setText(p.getDenominacion());
+        nombreProducto.setTypeface(face_regular);
         precioProducto = (TextView)findViewById(R.id.TxtPrecioProducto);
         precioProducto.setText(Double.toString(p.getPrecio()));
+        precioProducto.setTypeface(face_medium);
+        precioProductodolar = (TextView) findViewById(R.id.TxtPrecioProdu);
+        precioProductodolar.setTypeface(face_medium);
         descripcionProducto = (TextView)findViewById(R.id.TxtDescripcionProducto);
         descripcionProducto.setText(p.getDescripcion());
+        descripcionProducto.setTypeface(face_regular);
         cantidadPedida = (TextView)findViewById(R.id.Txtcantidadpedida);
         cantidadPedida.setText(Integer.toString(0));
+        cantidadPedida.setTypeface(face_semibold);
 
         menos = (Button) findViewById(R.id.btn_menos);
         menos.setOnClickListener( this );
@@ -59,6 +71,7 @@ public class detalle_productoActivity extends Activity implements OnClickListene
         mas.setOnClickListener( this );
         addCarrito = (Button) findViewById(R.id.btn_add_carrito);
         addCarrito.setOnClickListener( this );
+        addCarrito.setTypeface(face_semibold);
 
         sqlite = new DatabaseHandler(this);
 
@@ -132,18 +145,24 @@ public class detalle_productoActivity extends Activity implements OnClickListene
     private void AddProductoCarrito(){
         //agregar al pedido existente el producto, o crear un pedido y agregarle el producto
         //verifico si existe un pedido aun sin enviar
-        int idpedido = sqlite.existePedido_en_carrito();
 
         sqlite.Abrir();
+
+        int idpedido = sqlite.existePedido_en_carrito();
         Item i = new Item(p,idpedido,Integer.parseInt(cantidadPedida.getText().toString()),"");
 
         if (idpedido != 0){
-            sqlite.Add_Item(i);
+            if (sqlite.producto_no_esta_en_carrito(idpedido,p.getCod())){
+                sqlite.Add_Item(i);
+                Toast.makeText(getApplicationContext(), "El producto fue agregado al Carrito.", Toast.LENGTH_SHORT).show();
+            }else{
+                Toast.makeText(getApplicationContext(), "El producto ya existe en el carrito", Toast.LENGTH_SHORT).show();
+            }
         }else{
             //no existe un pedido en estado "Carrito", creo el pedido y le agrego el item
             sqlite.Add_pedido(sqlite.getIdUser(),ObtenerFechaActual(),i);
+            Toast.makeText(getApplicationContext(), "El producto fue agregado al Carrito.", Toast.LENGTH_SHORT).show();
         }
-        Toast.makeText(getApplicationContext(), "El producto fue agregado al Carrito.", Toast.LENGTH_SHORT).show();
     }
 
     public String ObtenerFechaActual(){
@@ -154,4 +173,5 @@ public class detalle_productoActivity extends Activity implements OnClickListene
 
         return formatteDate;
     }
+
 }

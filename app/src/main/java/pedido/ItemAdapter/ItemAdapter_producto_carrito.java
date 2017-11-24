@@ -3,6 +3,7 @@ package pedido.ItemAdapter;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -56,27 +57,36 @@ public class ItemAdapter_producto_carrito extends BaseAdapter {
         TextView txtCantidad;
         TextView txtPrecioTotal;
 
+        Typeface face_regular=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Regular.ttf");
+        Typeface face_medium=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-Medium.ttf");
+        Typeface face_semibold=Typeface.createFromAsset(context.getAssets(),"fonts/Barlow-SemiBold.ttf");
+
         //http://developer.android.com/intl/es/reference/android/view/LayoutInflater.html
         inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         View itemView = inflater.inflate(R.layout.list_row_carrito, parent, false);
 
         // Locate the TextViews in listview_item.xml
-        imgImg = (ImageView) itemView.findViewById(R.id.imagen_producto_list);
+        imgImg = (ImageView) itemView.findViewById(R.id.imagen_producto_list_carrito);
         txtTitle = (TextView) itemView.findViewById(R.id.textDescripcionProductoCarrito);
-        txtPrecio = (TextView) itemView.findViewById(R.id.text_precio_producto);
-        txtCantidad = (TextView) itemView.findViewById(R.id.text_cantidad_producto);
-        txtPrecioTotal = (TextView) itemView.findViewById(R.id.text_total_producto);
+        txtPrecio = (TextView) itemView.findViewById(R.id.text_precio_producto_carrito);
+        txtCantidad = (TextView) itemView.findViewById(R.id.text_cantidad_producto_carrito);
+        txtPrecioTotal = (TextView) itemView.findViewById(R.id.text_total_producto_carrito);
 
         // Capture position and set to the TextViews
         Item item = this.productos.get(position);
-        txtTitle.setText(item.getProducto().getDescripcion());
-        txtPrecio.setText(Double.toString(item.getProducto().getPrecio()));
+        txtTitle.setText(item.getProducto().getDenominacion());
+        txtPrecio.setText("$"+Double.toString(item.getProducto().getPrecio()));
         txtCantidad.setText(Double.toString(item.getCantidad()));
-        txtPrecioTotal.setText(Double.toString(item.getProducto().getPrecio()*item.getCantidad()));
+        txtPrecioTotal.setText("$"+Double.toString(item.getProducto().getPrecio()*item.getCantidad()));
+
+        txtTitle.setTypeface(face_medium);
+        txtPrecio.setTypeface(face_regular);
+        txtCantidad.setTypeface(face_regular);
+        txtPrecioTotal.setTypeface(face_semibold);
 
         String u = new String(item.getProducto().getLink());
-        new DownloadImageTask((ImageView) itemView.findViewById(R.id.imagen_producto_list)).execute(u);
+        new DownloadImageTask((ImageView) itemView.findViewById(R.id.imagen_producto_list_carrito)).execute(u);
 
         return itemView;
     }

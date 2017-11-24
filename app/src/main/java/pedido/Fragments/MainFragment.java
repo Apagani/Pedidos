@@ -5,17 +5,21 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 import java.util.List;
 import pedido.Comunicacion.Comunicacion_via_Socket;
 import pedido.ItemAdapter.ItemAdapter_producto;
+import pedido.Logica.Item;
 import pedido.Logica.Producto;
 import pedido.SQlite.DatabaseHandler;
 import pedido.Activitys.detalle_productoActivity;
@@ -29,6 +33,8 @@ public class MainFragment extends Fragment {
     ProgressBar mLoading;
     private DatabaseHandler sqlite;
     private ProgressDialog dialog;
+    private EditText filtro;
+    private ItemAdapter_producto adaptador;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -38,6 +44,23 @@ public class MainFragment extends Fragment {
 
         mLoading = (ProgressBar) v.findViewById(R.id.loading_productos);
         mLoading.setVisibility(View.VISIBLE);
+        filtro = (EditText) v.findViewById(R.id.edit_filtro);
+        filtro.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                adaptador.getFilter().filter(charSequence.toString());
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         //abro la base de datos
         sqlite = new DatabaseHandler(getActivity());
@@ -52,10 +75,9 @@ public class MainFragment extends Fragment {
     }
 
     public void Cargar_detalle_en_vista(){
-
-
          //seteo el adaptador a la lista con una lista de productos
-        listview_productos.setAdapter(new ItemAdapter_producto(getActivity(), lista_productos));
+        adaptador = new ItemAdapter_producto(getActivity(), lista_productos);
+        listview_productos.setAdapter(adaptador);
         listview_productos.setOnItemClickListener(new OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapter, View v, int position, long arg3) {
@@ -65,8 +87,6 @@ public class MainFragment extends Fragment {
                 getActivity().startActivity(intent);
             }
         });
-
-
     }
 
     public boolean Conectar_y_monstrar(){
@@ -107,5 +127,6 @@ public class MainFragment extends Fragment {
             mLoading.setVisibility(View.GONE);
         }
     }
+
 
 }

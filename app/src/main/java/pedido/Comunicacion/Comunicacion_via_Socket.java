@@ -8,6 +8,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
+import pedido.Global.ClassGlobal;
 import pedido.Logica.*;
 import android.app.Activity;
 import android.util.Log;
@@ -153,31 +154,7 @@ public class Comunicacion_via_Socket{
 		    e.printStackTrace();
 	   }
 	}
-	
-	
-	/*public Cartelera Enviar_peticion_Cartelera_actual(){
-		Enviar_peticion_de_datos_al_servidor(Accion.Cartelera);
-		
-		//Ahora me quedo esperando al servidor que me envie los datos
-		try {
-			// Manejamos flujo de Entrada
-			ObjectInputStream ois = new ObjectInputStream(miCliente.getInputStream());
-			Object aux = ois.readObject();// leemos objeto
-			
-			// si el objeto es una instancia de Pedido, Cliente, Producto
-			if (aux instanceof Paquete_de_datos) {
-					Paquete_de_datos p = (Paquete_de_datos)aux;
-					return p.Get_cartelera();
-		     }else{
-		    	 return null;
-		     }
-			
-	   } catch (Exception e) {
-		    e.printStackTrace();
-		    return null;
-	   }	
-	}
-	*/
+
 	
 	public ArrayList<Producto> Enviar_peticion_Productos(int cliente){
 		Enviar_peticion_de_datos_al_servidor(Accion.ListaProductos, cliente);
@@ -202,7 +179,7 @@ public class Comunicacion_via_Socket{
 	   }	
 	}
 
-	public Boolean Enviar_peticion_Login(Cliente cliente, Accion a){
+	public Boolean Enviar_peticion_Login(Cliente cliente, Accion a, Activity da){
 		Enviar_peticion_de_login_servidor(a, cliente);
 
 		//Ahora me quedo esperando al servidor que me envie los datos
@@ -220,6 +197,7 @@ public class Comunicacion_via_Socket{
 						 sqlite.Add_cliente(p.getCliente());
 						 return true;
 					 }else{
+						 ClassGlobal.getInstance().setDolar(p.getDolar());
 						 return true;
 					 }
 				}
@@ -232,7 +210,29 @@ public class Comunicacion_via_Socket{
 			return null;
 		}
 	}
-	
+
+	public ArrayList<ItemCtaCte> Enviar_peticion_detalle_cuenta_corriente(int cliente){
+		Enviar_peticion_de_datos_al_servidor(Accion.Detalle_CtaCte_Cliente, cliente);
+
+		//Ahora me quedo esperando al servidor que me envie los datos
+		try {
+			// Manejamos flujo de Entrada
+			ObjectInputStream ois = new ObjectInputStream(miCliente.getInputStream());
+			Object aux = ois.readObject();// leemos objeto
+
+			if (aux instanceof Paquete_de_datos) {
+				Paquete_de_datos p = (Paquete_de_datos)aux;
+				return p.getLista_Detalle_ctacte();
+			}else{
+				return null;
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public void Enviar_peticion_de_datos_al_servidor(Accion accion, int cliente){
 		 //envio un paquete de datos al servidor indicandole que me envie datos actualizados
 		//stock, cta.cte, clientes, productos.

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import pedido.Comunicacion.Comunicacion_via_Socket;
 import pedido.Comunicacion.Paquete_de_datos;
 import pedido.Logica.Cliente;
+import pedido.Logica.Producto;
 import pedido.SQlite.DatabaseHandler;
 import youtube.demo.youtubedemo.R;
 
@@ -26,6 +27,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
     private DatabaseHandler sqlite;
     private Cliente lu;
     private Comunicacion_via_Socket comunicacion;
+    private Button config;
     ProgressBar mLoading;
 
     @Override
@@ -40,6 +42,8 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
         // Set up the login form.
         user = (EditText) findViewById(R.id.user);
         password = (EditText) findViewById(R.id.password);
+        config = (Button) findViewById(R.id.Button_configuracion);
+        config.setOnClickListener(this);
 
         mLoading = (ProgressBar) findViewById(R.id.login_progress);
 
@@ -88,7 +92,7 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
     public void Conectar(Paquete_de_datos.Accion a){
         //primero conecto y y luego efectuo la operacion
         if (comunicacion.ConnectTimeout()) {
-            if (comunicacion.Enviar_peticion_Login(lu, a)) {
+            if (comunicacion.Enviar_peticion_Login(lu, a,this)) {
                 Toast.makeText(getApplicationContext(), "Bienvenido", Toast.LENGTH_SHORT).show();
                 mLoading.setVisibility(View.GONE);
 
@@ -124,6 +128,10 @@ public class LoginActivity extends AppCompatActivity implements OnClickListener{
             case R.id.email_sign_in_button:
                 mLoading.setVisibility(View.VISIBLE);
                 Verificar();
+                break;
+            case R.id.Button_configuracion:
+                Intent intent = new Intent(this, ConexionActivity.class);
+                startActivity(intent);
                 break;
         }
     }

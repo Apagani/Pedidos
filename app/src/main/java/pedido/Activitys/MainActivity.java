@@ -16,13 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import pedido.Fragments.*;
-import pedido.Logica.Producto;
-import pedido.SQlite.DatabaseHandler;
 import youtube.demo.youtubedemo.R;
-
-import android.widget.Toast;
-
-import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity
@@ -41,14 +35,14 @@ public class MainActivity extends AppCompatActivity
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+     /*   FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
-        });
+        });*/
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -109,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_compras) {
             fm.beginTransaction().replace(R.id.content_frame, new Compras()).commit();
         } else if (id == R.id.nav_estado_cuenta) {
-            fm.beginTransaction().replace(R.id.content_frame, new Cuentas()).commit();
+            fm.beginTransaction().replace(R.id.content_frame, new Cuenta_corriente()).commit();
         } else if (id == R.id.nav_micuenta) {
             fm.beginTransaction().replace(R.id.content_frame, new MiCuenta()).commit();
         } else if (id == R.id.nav_salir) {
